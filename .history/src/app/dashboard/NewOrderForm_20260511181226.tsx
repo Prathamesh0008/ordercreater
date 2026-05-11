@@ -222,15 +222,7 @@ export function NewOrderForm() {
                 <h3>{p.title}</h3>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button type="button" className="secondary" onClick={() => editParcel(idx)}>Edit</button>
-                  <button
-  type="button"
-  className="secondary icon-btn"
-  onClick={() => removeParcel(idx)}
-  aria-label="Remove parcel"
-  title="Remove"
->
-  <Trash2 size={16} />
-</button>
+                  <button type="button" className="secondary" onClick={() => removeParcel(idx)}>Remove</button>
                 </div>
               </div>
               <p>Type: {p.routeType === "EUROPE_TO_EUROPE" ? "Europe to Europe" : "US"}</p>

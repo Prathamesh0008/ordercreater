@@ -3,14 +3,6 @@ import { MongoClient } from "mongodb";
 
 export type Role = "USER" | "ADMIN";
 
-export type OrderStatus =
-  | "PENDING"
-  | "PROCESSING"
-  | "PACKED"
-  | "IN_TRANSIT"
-  | "DELIVERED"
-  | "CANCELLED";
-
 export type Recipient = {
   id: string;
   userId: string;
@@ -42,10 +34,7 @@ export type Order = {
   zipCode: string;
   country: string;
   contactPhone?: string;
-  status?: OrderStatus;
-  trackingId?: string;
   createdAt: string;
-  updatedAt?: string;
   items: { id: string; name: string; quantity: number }[];
 };
 
@@ -68,7 +57,6 @@ type MongoRecipient = Recipient & { _id?: unknown };
 
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || "kva2";
-
 if (!uri) throw new Error("MONGODB_URI is required");
 
 const adminEmail = (process.env.ADMIN_EMAIL || "admin@kva.com").toLowerCase();
@@ -109,40 +97,12 @@ function stripId<T extends { _id?: unknown }>(doc: T): Omit<T, "_id"> {
   return rest;
 }
 
-function normalizeOrderStatus(status?: string | null): OrderStatus {
-  const allowed: OrderStatus[] = [
-    "PENDING",
-    "PROCESSING",
-    "PACKED",
-    "IN_TRANSIT",
-    "DELIVERED",
-    "CANCELLED",
-  ];
-
-  return allowed.includes(status as OrderStatus)
-    ? (status as OrderStatus)
-    : "PENDING";
-}
-
-function normalizeOrder(order: Order): Order {
-  return {
-    ...order,
-    status: normalizeOrderStatus(order.status),
-    trackingId: order.trackingId || "",
-  };
-}
-
 export async function ensureAdminUser() {
   const users = await usersCollection();
   const hash = await bcrypt.hash(adminPassword, 10);
-
-  await users.updateMany(
-    { role: "ADMIN", email: { $ne: adminEmail } },
-    { $set: { role: "USER" } }
-  );
+  await users.updateMany({ role: "ADMIN", email: { $ne: adminEmail } }, { $set: { role: "USER" } });
 
   const existingAdmin = await users.findOne({ email: adminEmail });
-
   if (!existingAdmin) {
     await users.insertOne({
       id: crypto.randomUUID(),
@@ -152,33 +112,20 @@ export async function ensureAdminUser() {
       role: "ADMIN",
       createdAt: new Date().toISOString(),
     });
-
     return;
   }
 
   if (existingAdmin.role !== "ADMIN") {
-    await users.updateOne(
-      { email: adminEmail },
-      { $set: { role: "ADMIN" } }
-    );
+    await users.updateOne({ email: adminEmail }, { $set: { role: "ADMIN" } });
   }
 }
 
 export async function findUserByEmail(email: string) {
-  const user = await (await usersCollection()).findOne({
-    email: email.toLowerCase(),
-  });
-
+  const user = await (await usersCollection()).findOne({ email: email.toLowerCase() });
   return user ? (stripId(user) as User) : null;
 }
 
-export async function createUser(
-  name: string,
-  email: string,
-  password: string,
-  whatsappNumber: string,
-  profilePhoto: string
-) {
+export async function createUser(name: string, email: string, password: string, whatsappNumber: string, profilePhoto: string) {
   const users = await usersCollection();
   const passwordHash = await bcrypt.hash(password, 10);
 
@@ -194,32 +141,18 @@ export async function createUser(
   };
 
   await users.insertOne(user);
-
   return user;
 }
 
 export async function verifyUser(email: string, password: string) {
   const user = await findUserByEmail(email);
-
   if (!user) return null;
-
   return (await bcrypt.compare(password, user.passwordHash)) ? user : null;
 }
 
-export async function upsertRecipient(
-  userId: string,
-  name: string,
-  address: string,
-  contactPhone?: string
-) {
+export async function upsertRecipient(userId: string, name: string, address: string, contactPhone?: string) {
   const recipients = await recipientsCollection();
-
-  const existing = await recipients.findOne({
-    userId,
-    name,
-    address,
-  });
-
+  const existing = await recipients.findOne({ userId, name, address });
   if (existing) return stripId(existing) as Recipient;
 
   const recipient: Recipient = {
@@ -232,7 +165,6 @@ export async function upsertRecipient(
   };
 
   await recipients.insertOne(recipient);
-
   return recipient;
 }
 
@@ -241,44 +173,28 @@ export async function importRecipientsBulk(
   rows: { name: string; address: string; contactPhone?: string }[]
 ) {
   let importedCount = 0;
-
   for (const row of rows) {
     const before = await getRecipientsByUser(userId);
-
     await upsertRecipient(userId, row.name, row.address, row.contactPhone);
-
     const after = await getRecipientsByUser(userId);
-
     if (after.length > before.length) importedCount++;
   }
 
   const recipients = await getRecipientsByUser(userId);
-
   return { importedCount, recipients };
 }
 
 export async function getRecipientsByUser(userId: string) {
-  const docs = await (await recipientsCollection())
-    .find({ userId })
-    .sort({ createdAt: -1 })
-    .toArray();
-
+  const docs = await (await recipientsCollection()).find({ userId }).sort({ createdAt: -1 }).toArray();
   return docs.map((x) => stripId(x) as Recipient);
 }
 
 export async function deleteRecipientById(userId: string, id: string) {
-  const result = await (await recipientsCollection()).deleteOne({
-    userId,
-    id,
-  });
-
+  const result = await (await recipientsCollection()).deleteOne({ userId, id });
   return result.deletedCount > 0;
 }
 
-export async function createOrdersBulk(
-  userId: string,
-  parcels: NewOrderInput[]
-) {
+export async function createOrdersBulk(userId: string, parcels: NewOrderInput[]) {
   const orders = await ordersCollection();
   const created: Order[] = [];
 
@@ -294,27 +210,15 @@ export async function createOrdersBulk(
       zipCode: parcel.zipCode,
       country: parcel.country,
       contactPhone: parcel.contactPhone,
-      status: "PENDING",
-      trackingId: "",
       createdAt: new Date().toISOString(),
-      items: parcel.items.map((x) => ({
-        id: crypto.randomUUID(),
-        name: x.name,
-        quantity: x.quantity,
-      })),
+      items: parcel.items.map((x) => ({ id: crypto.randomUUID(), name: x.name, quantity: x.quantity })),
     };
 
     await orders.insertOne(order);
-
     created.push(order);
 
     if (parcel.saveAddress) {
-      await upsertRecipient(
-        userId,
-        parcel.title,
-        parcel.address,
-        parcel.contactPhone
-      );
+      await upsertRecipient(userId, parcel.title, parcel.address, parcel.contactPhone);
     }
   }
 
@@ -322,12 +226,8 @@ export async function createOrdersBulk(
 }
 
 export async function getOrdersByUser(userId: string) {
-  const docs = await (await ordersCollection())
-    .find({ userId })
-    .sort({ createdAt: -1 })
-    .toArray();
-
-  return docs.map((x) => normalizeOrder(stripId(x) as Order));
+  const docs = await (await ordersCollection()).find({ userId }).sort({ createdAt: -1 }).toArray();
+  return docs.map((x) => stripId(x) as Order);
 }
 
 export async function getAllOrdersWithUsers() {
@@ -336,43 +236,6 @@ export async function getAllOrdersWithUsers() {
     (await usersCollection()).find({}).toArray(),
   ]);
 
-  const userMap = new Map(
-    userDocs.map((u) => [u.id, stripId(u) as User])
-  );
-
-  return orderDocs.map((order) => ({
-    ...normalizeOrder(stripId(order) as Order),
-    user: userMap.get(order.userId),
-  }));
-}
-
-export async function updateOrderAdminFields({
-  orderId,
-  status,
-  trackingId,
-}: {
-  orderId: string;
-  status: OrderStatus;
-  trackingId: string;
-}) {
-  const orders = await ordersCollection();
-
-  const result = await orders.updateOne(
-    { id: orderId },
-    {
-      $set: {
-        status,
-        trackingId,
-        updatedAt: new Date().toISOString(),
-      },
-    }
-  );
-
-  if (result.matchedCount === 0) {
-    return null;
-  }
-
-  const updated = await orders.findOne({ id: orderId });
-
-  return updated ? normalizeOrder(stripId(updated) as Order) : null;
+  const userMap = new Map(userDocs.map((u) => [u.id, stripId(u) as User]));
+  return orderDocs.map((order) => ({ ...(stripId(order) as Order), user: userMap.get(order.userId) }));
 }

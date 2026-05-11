@@ -29,7 +29,6 @@ export async function GET() {
     "Sr No": index + 1,
     "Order ID": order.id,
     "Order Status": formatStatus(order.status),
-    "Tracking ID": order.trackingId || "",
     "Order Date": new Date(order.createdAt).toLocaleString("en-IN"),
     "Route Type":
       order.routeType === "EUROPE_TO_EUROPE" ? "Europe to Europe" : "US",
@@ -53,7 +52,6 @@ export async function GET() {
     { wch: 8 },
     { wch: 38 },
     { wch: 18 },
-    { wch: 24 },
     { wch: 24 },
     { wch: 18 },
     { wch: 24 },

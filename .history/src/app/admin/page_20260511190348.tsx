@@ -12,7 +12,6 @@ export default async function AdminPage() {
   const formattedOrders = orders.map((order) => ({
     ...order,
     status: order.status || "PENDING",
-    trackingId: order.trackingId || "",
     createdAt: new Date(order.createdAt).toISOString(),
   }));
 

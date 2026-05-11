@@ -43,7 +43,6 @@ export type Order = {
   country: string;
   contactPhone?: string;
   status?: OrderStatus;
-  trackingId?: string;
   createdAt: string;
   updatedAt?: string;
   items: { id: string; name: string; quantity: number }[];
@@ -128,7 +127,6 @@ function normalizeOrder(order: Order): Order {
   return {
     ...order,
     status: normalizeOrderStatus(order.status),
-    trackingId: order.trackingId || "",
   };
 }
 
@@ -295,7 +293,6 @@ export async function createOrdersBulk(
       country: parcel.country,
       contactPhone: parcel.contactPhone,
       status: "PENDING",
-      trackingId: "",
       createdAt: new Date().toISOString(),
       items: parcel.items.map((x) => ({
         id: crypto.randomUUID(),
@@ -346,15 +343,10 @@ export async function getAllOrdersWithUsers() {
   }));
 }
 
-export async function updateOrderAdminFields({
-  orderId,
-  status,
-  trackingId,
-}: {
-  orderId: string;
-  status: OrderStatus;
-  trackingId: string;
-}) {
+export async function updateOrderStatus(
+  orderId: string,
+  status: OrderStatus
+) {
   const orders = await ordersCollection();
 
   const result = await orders.updateOne(
@@ -362,7 +354,6 @@ export async function updateOrderAdminFields({
     {
       $set: {
         status,
-        trackingId,
         updatedAt: new Date().toISOString(),
       },
     }
