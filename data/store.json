@@ -1,0 +1,38 @@
+{
+  "users": [
+    {
+      "id": "73eabb1c-3415-4f13-aac4-6bf422009557",
+      "name": "sedanafil",
+      "email": "s@gmail.com",
+      "passwordHash": "$2b$10$J34ZxvmgglzH2HJyBiXgQeMmp1F4B5AQgt4Jc8z9SycJHsUcnOkg2",
+      "role": "USER",
+      "createdAt": "2026-05-11T09:43:24.351Z"
+    },
+    {
+      "id": "6aedc39b-a1f1-42a0-a12c-d68ccdb335cf",
+      "name": "Main Admin",
+      "email": "admin@kva.com",
+      "passwordHash": "$2b$10$/08ZCsMEW68lTMhnZA2cw.38BlYIfAmW53rPxblz8uU3xKeHDYlyC",
+      "role": "ADMIN",
+      "createdAt": "2026-05-11T09:51:33.256Z"
+    }
+  ],
+  "orders": [
+    {
+      "userId": "73eabb1c-3415-4f13-aac4-6bf422009557",
+      "routeType": "US",
+      "title": "EMA.Internationals",
+      "address": "mumbai",
+      "contactPhone": "08291293651",
+      "items": [
+        {
+          "name": "wwd",
+          "quantity": 1,
+          "id": "e7a30474-2637-4120-8a3f-981dd412a4d3"
+        }
+      ],
+      "id": "ff6196be-ad71-4d9b-b82c-ddf9a93f2551",
+      "createdAt": "2026-05-11T09:52:55.941Z"
+    }
+  ]
+}
