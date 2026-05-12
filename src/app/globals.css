@@ -282,3 +282,116 @@ ul { margin: 0; padding-left: 1rem; }
 .product-table tr:last-child td {
   border-bottom: none;
 }
+
+.mobile-topbar,
+.mobile-backdrop,
+.mobile-close-btn {
+  display: none;
+}
+
+.mobile-drawer-head {
+  display: contents;
+}
+
+.client-content-wrap {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .client-page-grid {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem;
+    background: rgba(255, 250, 241, 0.96);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+
+  .mobile-topbar h2 {
+    font-size: 1.05rem;
+  }
+
+  .mobile-menu-btn,
+  .mobile-close-btn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    background: #fffdf8;
+    color: var(--text);
+  }
+
+  .mobile-menu-btn:hover,
+  .mobile-close-btn:hover {
+    transform: none;
+    box-shadow: 0 8px 18px rgba(70, 39, 18, 0.12);
+  }
+
+  .desktop-sidebar.mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 80;
+    width: min(82vw, 320px);
+    height: 100vh;
+    overflow-y: auto;
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    border-right: 1px solid var(--border);
+    border-bottom: none;
+    box-shadow: 20px 0 45px rgba(40, 24, 12, 0.22);
+  }
+
+  .desktop-sidebar.mobile-drawer.mobile-drawer-open {
+    transform: translateX(0);
+  }
+
+  .mobile-drawer-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: block;
+    background: rgba(30, 20, 12, 0.45);
+    backdrop-filter: blur(2px);
+  }
+
+  .client-content-wrap {
+    width: 100%;
+    max-width: none;
+    padding: 0.85rem;
+  }
+
+  .nav-group {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .nav-btn {
+    width: 100%;
+    text-align: left;
+  }
+
+  .user-pill {
+    word-break: break-word;
+  }
+}
