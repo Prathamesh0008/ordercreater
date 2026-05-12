@@ -44,6 +44,20 @@ function formatStatus(status?: string) {
   return labels[status || "PENDING"] || "Pending";
 }
 
+function getStatusClass(status?: string) {
+  const key = status || "PENDING";
+  const map: Record<string, string> = {
+    PENDING: "status-pill pending",
+    PROCESSING: "status-pill processing",
+    PACKED: "status-pill packed",
+    IN_TRANSIT: "status-pill transit",
+    DELIVERED: "status-pill delivered",
+    CANCELLED: "status-pill cancelled",
+  };
+
+  return map[key] || "status-pill pending";
+}
+
 export function DashboardClient({
   userName,
   userEmail,
@@ -74,7 +88,6 @@ export function DashboardClient({
     <main className="page-grid client-page-grid">
       <header className="mobile-topbar">
         <div>
-          <h2>KVA Logistics</h2>
           <p className="muted">Order Workspace</p>
         </div>
 
@@ -104,7 +117,6 @@ export function DashboardClient({
       >
         <div className="mobile-drawer-head">
           <div className="brand-block">
-            <h2>KVA Logistics</h2>
             <p className="muted">Order Workspace</p>
           </div>
 
@@ -155,6 +167,21 @@ export function DashboardClient({
       </aside>
 
       <section className="content-wrap client-content-wrap">
+        <div className="dashboard-stats">
+          <div className="stat-card">
+            <span className="muted">Total Orders</span>
+            <strong>{initialOrders.length}</strong>
+          </div>
+          <div className="stat-card">
+            <span className="muted">Saved Recipients</span>
+            <strong>{initialRecipients.length}</strong>
+          </div>
+          <div className="stat-card">
+            <span className="muted">Workspace</span>
+            <strong>{tab === "new" ? "New Order" : tab === "history" ? "Orders" : "Recipients"}</strong>
+          </div>
+        </div>
+
         {tab === "new" ? <NewOrderForm /> : null}
 
         {tab === "history" ? (
@@ -165,7 +192,7 @@ export function DashboardClient({
             </div>
 
             {initialOrders.length === 0 ? (
-              <p className="muted">No order yet.</p>
+              <p className="empty-state">No order yet.</p>
             ) : null}
 
             {initialOrders.map((order) => (
@@ -180,7 +207,7 @@ export function DashboardClient({
                 <div className="user-order-status-row">
                   <div>
                     <span className="muted">Status</span>
-                    <strong>{formatStatus(order.status)}</strong>
+                    <strong className={getStatusClass(order.status)}>{formatStatus(order.status)}</strong>
                   </div>
 
                   <div>

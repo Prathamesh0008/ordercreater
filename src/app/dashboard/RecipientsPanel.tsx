@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useState } from "react";
 import * as XLSX from "xlsx";
+import { Trash2 } from "lucide-react";
 
 type Recipient = {
   id: string;
@@ -80,12 +81,20 @@ export function RecipientsPanel({ recipients }: { recipients: Recipient[] }) {
         {message ? <p className="muted">{message}</p> : null}
       </div>
 
-      {list.length === 0 ? <p className="muted">No saved addresses yet.</p> : null}
+      {list.length === 0 ? <p className="empty-state">No saved addresses yet.</p> : null}
       {list.map((r) => (
         <div className="order-card" key={r.id}>
           <div className="order-top">
             <h3>{r.name}</h3>
-            <button type="button" className="secondary" onClick={() => deleteRecipient(r.id)}>Delete</button>
+            <button
+              type="button"
+              className="secondary icon-btn"
+              onClick={() => deleteRecipient(r.id)}
+              aria-label="Delete recipient"
+              title="Delete"
+            >
+              <Trash2 size={16} />
+            </button>
           </div>
           <p>{r.address}</p>
           <p>{r.contactPhone || "-"}</p>
