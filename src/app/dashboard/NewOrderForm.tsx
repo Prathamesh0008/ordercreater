@@ -174,7 +174,7 @@ function FlagDropdown({
   value={search}
   placeholder={placeholder}
   autoComplete="off"
-  autoFocus
+ 
   className="flag-input"
   onFocus={() => setOpen(true)}
   onChange={(e) => {
