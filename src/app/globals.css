@@ -882,8 +882,13 @@ ul { margin: 0; padding-left: 1rem; }
   opacity: 0.55;
 }
 
-/* Product section */
-.new-order-shell .product-section {
+/* Product section inner spacing */
+.new-order-shell .product-section,
+.compact-order-page .product-section {
+  margin-top: 1.25rem;
+  padding: 1rem !important;
+  display: grid;
+  gap: 0.9rem;
   background: rgba(228, 218, 216, 0.55);
   border: 1px solid rgba(144, 121, 139, 0.22);
 }
@@ -1273,4 +1278,274 @@ ul { margin: 0; padding-left: 1rem; }
 .client-page-grid .product-table th,
 .client-page-grid .product-table td {
   border-radius: 0 !important;
+}
+
+/* ================================
+   Custom Country / Phone Dropdown
+================================ */
+
+.country-dropdown {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.country-dropdown input {
+  width: 100%;
+}
+
+.country-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  width: 100% !important;
+  height: 100%;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  cursor: default;
+}
+
+.country-dropdown-backdrop:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.country-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  max-height: 230px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid rgba(144, 121, 139, 0.25);
+  box-shadow: 0 18px 35px rgba(47, 38, 48, 0.16);
+}
+
+.country-dropdown-item {
+  width: 100% !important;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.72rem 0.8rem !important;
+  background: #ffffff !important;
+  color: #2f2630 !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(144, 121, 139, 0.14) !important;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
+.country-dropdown-item:hover {
+  background: rgba(200, 179, 192, 0.28) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.country-flag {
+  font-size: 1.35rem;
+  line-height: 1;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.country-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.country-code {
+  color: #6f6470;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.country-dropdown-empty {
+  padding: 0.75rem 0.85rem;
+  color: #6f6470;
+  background: #ffffff;
+}
+
+/* Stop your global button width/gradient from damaging dropdown buttons */
+.client-page-grid .country-dropdown-menu button,
+.new-order-shell .country-dropdown-menu button,
+.compact-order-page .country-dropdown-menu button {
+  width: 100% !important;
+  background: #ffffff !important;
+  color: #2f2630 !important;
+  border-radius: 0 !important;
+}
+
+/* ================================
+   Compact Real Flag Dropdown
+================================ */
+
+.flag-dropdown {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  z-index: 20;
+}
+
+.flag-input-wrap {
+  width: 100%;
+}
+
+.flag-img {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.flag-select-trigger {
+  width: 100%;
+  height: 45px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.8rem;
+  background: #ffffff;
+  color: #2f2630;
+  border: 1px solid rgba(144, 121, 139, 0.25);
+  cursor: pointer;
+}
+
+.flag-select-trigger:hover {
+  background: rgba(200, 179, 192, 0.18);
+}
+
+.flag-input {
+  width: 100%;
+  height: 45px;
+}
+
+.flag-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: transparent;
+}
+
+.flag-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  max-height: 92px; /* ✅ small dropdown height */
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: #ffffff;
+  border: 1px solid rgba(144, 121, 139, 0.25);
+  box-shadow: 0 12px 25px rgba(47, 38, 48, 0.16);
+}
+
+.flag-dropdown-item {
+  height: 44px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.8rem;
+  cursor: pointer;
+  background: #ffffff;
+  color: #2f2630;
+  border-bottom: 1px solid rgba(144, 121, 139, 0.12);
+}
+
+.flag-dropdown-item:hover {
+  background: rgba(200, 179, 192, 0.28);
+}
+
+.flag-country-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flag-country-code {
+  color: #6f6470;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Make country dropdown appear above other form boxes */
+.new-order-panel,
+.form-grid,
+.field {
+  overflow: visible !important;
+}
+
+/* ================================
+   Compact Dashboard Stats Boxes
+================================ */
+
+.client-page-grid .dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 260px);
+  gap: 3rem;
+  justify-content: start;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.client-page-grid .stat-card {
+  width: 260px;
+  height: 150px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.client-page-grid .stat-card .muted {
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.client-page-grid .stat-card strong {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+/* Responsive: square boxes side by side */
+@media (max-width: 640px) {
+  .client-page-grid .dashboard-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+    width: 100%;
+  }
+
+  .client-page-grid .stat-card {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    min-height: 88px;
+    padding: 0.55rem;
+    text-align: center;
+    align-items: center;
+  }
+
+  .client-page-grid .stat-card .muted {
+    font-size: 0.68rem;
+  }
+
+  .client-page-grid .stat-card strong {
+    font-size: 0.82rem;
+  }
 }
