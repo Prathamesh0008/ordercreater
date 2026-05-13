@@ -82,7 +82,6 @@ const COUNTRY_OPTIONS = [
   { flag: "se", name: "Sweden", dialCode: "+46" },
   { flag: "ch", name: "Switzerland", dialCode: "+41" },
   { flag: "ua", name: "Ukraine", dialCode: "+380" },
-
   { flag: "ca", name: "Canada", dialCode: "+1" },
   { flag: "au", name: "Australia", dialCode: "+61" },
   { flag: "sg", name: "Singapore", dialCode: "+65" },
@@ -171,17 +170,18 @@ function FlagDropdown({
         </div>
       ) : (
         <div className="flag-input-wrap">
-          <input
-            value={search}
-            placeholder={placeholder}
-            autoComplete="off"
-            className="flag-input"
-            onFocus={() => setOpen(true)}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setOpen(true);
-            }}
-          />
+       <input
+  value={search}
+  placeholder={placeholder}
+  autoComplete="off"
+  autoFocus
+  className="flag-input"
+  onFocus={() => setOpen(true)}
+  onChange={(e) => {
+    setSearch(e.target.value);
+    setOpen(true);
+  }}
+/>
         </div>
       )}
 
