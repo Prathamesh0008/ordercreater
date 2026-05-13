@@ -150,25 +150,35 @@ function FlagDropdown({
       country.name.toLowerCase().includes(q) ||
       country.dialCode.includes(q)
     );
-  }).slice(0, 2); // ✅ only 1-2 list items
+  })
 
   return (
     <div className="flag-dropdown">
-      {selectedCountry && !open ? (
-        <div
-          className="flag-select-trigger"
-          onClick={() => {
-            setSearch("");
-            setOpen(true);
-          }}
-        >
-          <FlagIcon code={selectedCountry.flag} label={selectedCountry.name} />
+    {selectedCountry && !open ? (
+  <div
+    className="flag-select-trigger"
+    role="button"
+    tabIndex={0}
+    onClick={() => {
+      setSearch("");
+      setOpen(true);
+    }}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        setSearch("");
+        setOpen(true);
+      }
+    }}
+  >
+    <FlagIcon code={selectedCountry.flag} label={selectedCountry.name} />
 
-          <span className="flag-country-name">{selectedCountry.name}</span>
+    <span className="flag-country-name">{selectedCountry.name}</span>
 
-          <span className="flag-country-code">{selectedCountry.dialCode}</span>
-        </div>
-      ) : (
+    {type === "phone" ? (
+      <span className="flag-country-code">{selectedCountry.dialCode}</span>
+    ) : null}
+  </div>
+) : (
         <div className="flag-input-wrap">
        <input
   value={search}
@@ -195,7 +205,7 @@ function FlagDropdown({
             }}
           />
 
-          <ul className="flag-dropdown-menu">
+        <ul className="flag-dropdown-menu max-h-[92px] overflow-y-auto overscroll-contain">
             {filteredCountries.map((country) => (
               <li
                 key={`${country.name}-${country.dialCode}`}
@@ -212,7 +222,9 @@ function FlagDropdown({
 
                 <span className="flag-country-name">{country.name}</span>
 
-                <span className="flag-country-code">{country.dialCode}</span>
+               {type === "phone" ? (
+  <span className="flag-country-code">{country.dialCode}</span>
+) : null}
               </li>
             ))}
           </ul>
@@ -233,8 +245,10 @@ export function NewOrderForm() {
   const [productName, setProductName] = useState("");
   const [productQty, setProductQty] = useState("1");
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const [successMessage, setSuccessMessage] = useState("");
+const [showConfirmedBox, setShowConfirmedBox] = useState(false);
+const [confirmedParcels, setConfirmedParcels] = useState<Parcel[]>([]);
+const [isSubmitting, setIsSubmitting] = useState(false);
 
   function addProductToParcel() {
     if (productName.trim().length < 1) return;
@@ -360,7 +374,19 @@ export function NewOrderForm() {
     setSuccessMessage("");
     setStep(2);
   }
-
+function placeNewOrder() {
+  setStep(1);
+  setRouteType("");
+  setParcelForm(emptyParcel());
+  setParcels([]);
+  setConfirmedParcels([]);
+  setEditingIndex(null);
+  setProductName("");
+  setProductQty("1");
+  setError("");
+  setSuccessMessage("");
+  setShowConfirmedBox(false);
+}
   async function confirmAll() {
     if (parcels.length === 0) return setError("Add at least one parcel");
 
@@ -391,7 +417,14 @@ export function NewOrderForm() {
       }
 
       router.refresh();
-      setSuccessMessage("Order confirmed successfully.");
+
+setConfirmedParcels(parcels);
+setSuccessMessage("Order confirmed successfully.");
+setShowConfirmedBox(true);
+
+setTimeout(() => {
+  setShowConfirmedBox(false);
+}, 2500);
     } catch {
       setError("Order creation failed. Please try again.");
     } finally {
@@ -658,80 +691,106 @@ export function NewOrderForm() {
         ) : null}
 
         {step === 3 ? (
-          <>
-            <div className="panel-head">
-              <h3>Review Order</h3>
-              <span className="badge">{parcels.length} parcels</span>
+  <>
+    {showConfirmedBox ? (
+      <div className="confirm-order-screen">
+        <div className="confirm-order-card">
+          <h2>Order Confirmed</h2>
+          <p>Your order has been confirmed successfully.</p>
+        </div>
+      </div>
+    ) : (
+      <>
+        <div className="panel-head">
+          <h3>{successMessage ? "Order Summary" : "Review Order"}</h3>
+          <span className="badge">
+            {(confirmedParcels.length > 0 ? confirmedParcels : parcels).length} parcels
+          </span>
+        </div>
+
+        {successMessage ? (
+          <div className="confirmed-summary-head">
+            <h3>Order Summary</h3>
+            <p>Below is the confirmed order summary.</p>
+          </div>
+        ) : null}
+
+        {(confirmedParcels.length > 0 ? confirmedParcels : parcels).map((p, idx) => (
+          <div className="order-card" key={idx}>
+            <div className="order-top">
+              <h3>{p.title}</h3>
+              <span className="badge">Parcel {idx + 1}</span>
             </div>
 
-            {successMessage ? <p className="success">{successMessage}</p> : null}
+            <p>
+              Type:{" "}
+              {p.routeType === "EUROPE_TO_EUROPE"
+                ? "Europe to Europe"
+                : "US"}
+            </p>
 
-            {parcels.map((p, idx) => (
-              <div className="order-card" key={idx}>
-                <div className="order-top">
-                  <h3>{p.title}</h3>
-                  <span className="badge">Parcel {idx + 1}</span>
-                </div>
+            <p>
+              Phone: {p.phoneCode} {p.contactPhone}
+            </p>
 
-                <p>
-                  Type:{" "}
-                  {p.routeType === "EUROPE_TO_EUROPE"
-                    ? "Europe to Europe"
-                    : "US"}
-                </p>
+            <p>{p.address}</p>
 
-                <p>
-                  Phone: {p.phoneCode} {p.contactPhone}
-                </p>
+            <p>
+              {p.city}, {p.state} - {p.zipCode}, {p.country}
+            </p>
 
-                <p>{p.address}</p>
+            <p>Save Address: {p.saveAddress ? "Yes" : "No"}</p>
 
-                <p>
-                  {p.city}, {p.state} - {p.zipCode}, {p.country}
-                </p>
-
-                <p>Save Address: {p.saveAddress ? "Yes" : "No"}</p>
-
-                <ul>
-                  {p.items.map((i, x) => (
-                    <li key={x}>
-                      {i.name} x {i.quantity}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </>
-        ) : null}
+            <ul>
+              {p.items.map((i, x) => (
+                <li key={x}>
+                  {i.name} x {i.quantity}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </>
+    )}
+  </>
+) : null}
 
         {error ? <p className="error">{error}</p> : null}
 
         <div className="wizard-actions">
           {step === 3 ? (
-            <>
-              <button
-                type="button"
-                className="secondary fit-btn cursor-pointer disabled:cursor-not-allowed"
-                onClick={editOrderFromReview}
-                disabled={isSubmitting || Boolean(successMessage)}
-              >
-                Edit Order
-              </button>
+  <>
+    {showConfirmedBox ? null : successMessage ? (
+      <button
+        type="button"
+        className="fit-btn cursor-pointer"
+        onClick={placeNewOrder}
+      >
+        Place New Order
+      </button>
+    ) : (
+      <>
+        <button
+          type="button"
+          className="secondary fit-btn cursor-pointer disabled:cursor-not-allowed"
+          onClick={editOrderFromReview}
+          disabled={isSubmitting}
+        >
+          Edit Order
+        </button>
 
-              <button
-                type="button"
-                className="fit-btn cursor-pointer disabled:cursor-not-allowed"
-                onClick={confirmAll}
-                disabled={isSubmitting || Boolean(successMessage)}
-              >
-                {isSubmitting
-                  ? "Confirming..."
-                  : successMessage
-                  ? "Confirmed"
-                  : "Confirm Order"}
-              </button>
-            </>
-          ) : (
+        <button
+          type="button"
+          className="fit-btn cursor-pointer disabled:cursor-not-allowed"
+          onClick={confirmAll}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Confirming..." : "Confirm Order"}
+        </button>
+      </>
+    )}
+  </>
+) : (
             <>
               <button
                 type="button"
@@ -773,8 +832,10 @@ export function NewOrderForm() {
       {step === 2 ? (
         <aside className="right-preview-panel compact-preview-panel">
           <div className="panel-head">
-            <h3>Parcels</h3>
-            <span className="badge">{parcels.length} parcels</span>
+           <h3>{successMessage ? "Confirmed Order" : "Review Order"}</h3>
+<span className="badge">
+  {(confirmedParcels.length > 0 ? confirmedParcels.length : parcels.length)} parcels
+</span>
           </div>
 
           {parcels.length === 0 ? (

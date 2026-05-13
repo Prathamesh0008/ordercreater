@@ -1549,3 +1549,70 @@ ul { margin: 0; padding-left: 1rem; }
     font-size: 0.82rem;
   }
 }
+
+/* Confirmed order success box */
+.confirmed-box {
+  padding: 1rem;
+  background: rgba(22, 163, 74, 0.1);
+  border: 1px solid rgba(22, 163, 74, 0.28);
+  color: #15803d;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.confirmed-box h3 {
+  color: #15803d;
+  font-size: 1.05rem;
+}
+
+.confirmed-box p {
+  color: #166534;
+  font-size: 0.9rem;
+}
+
+/* Confirmed summary heading */
+.confirmed-summary-head {
+  padding: 0.9rem 1rem;
+  background: rgba(228, 218, 216, 0.45);
+  border: 1px solid rgba(144, 121, 139, 0.22);
+  display: grid;
+  gap: 0.25rem;
+}
+
+.confirmed-summary-head h3 {
+  color: #2f2630;
+}
+
+.confirmed-summary-head p {
+  color: #6f6470;
+  font-size: 0.9rem;
+}
+
+/* Full separate confirmation container */
+.confirm-order-screen {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+}
+
+.confirm-order-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+  display: grid;
+  gap: 0.5rem;
+  text-align: center;
+  background: rgba(22, 163, 74, 0.1);
+  border: 1px solid rgba(22, 163, 74, 0.28);
+  color: #15803d;
+}
+
+.confirm-order-card h2 {
+  color: #15803d;
+  font-size: 1.4rem;
+}
+
+.confirm-order-card p {
+  color: #166534;
+  font-size: 0.95rem;
+}
